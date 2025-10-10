@@ -1,6 +1,6 @@
 # Speech to OWL Ontology
 
-[![tests](https://github.com/your-org-or-user/your-repo-name/actions/workflows/tests.yml/badge.svg)](https://github.com/your-org-or-user/your-repo-name/actions/workflows/tests.yml)
+[![tests](https://github.com/GIO443/speech-to-owl/actions/workflows/tests.yml/badge.svg)](https://github.com/GIO443/speech-to-owl/actions/workflows/tests.yml)
 
 Turn short spoken phrases into a standards-compliant OWL ontology (RDF/XML) you can use anywhere.
 
