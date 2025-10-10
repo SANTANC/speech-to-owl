@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎧 Audio to OWL</title>
+  <style>
+    body { background:#111; color:#eee; font-family: monospace; padding:2rem; }
+    #volumeBar { height:20px; background:#333; border-radius:10px; overflow:hidden; margin-bottom:1rem; }
+    #volumeFill { height:100%; width:0%; background:#28a745; transition: width 0.1s linear; }
+    .graph-box { background:#222; padding:1rem; margin:1rem 0; border-radius:8px; }
+    #messageLog { background:#1c1c1c; padding:1rem; border:1px solid #333; margin-top:1rem; border-radius:8px; max-height:200px; overflow-y:auto; }
+    button { background:#444; color:white; border:none; padding:0.5rem 1rem; margin:0.5rem; border-radius:5px; cursor:pointer; }
+    button:hover { background:#666; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+<h1>🎤 Live OWL from Audio</h1>
+<div id="volumeBar"><div id="volumeFill"></div></div>
+
+<div id="clarificationBox" style="display:none;">
+  <p id="clarificationMessage"></p>
+  <button onclick="respondToClarification('Yes')">✅ Yes</button>
+  <button onclick="respondToClarification('No')">❌ No</button>
+</div>
+
+<div class="graph-box">
+  <h2>Ontology OWL (RDF/XML)</h2>
+  <pre id="owlDisplay">Waiting for OWL...</pre>
+  <button id="downloadOwlBtn">Download OWL</button>
+</div>
+
+<div id="messageLog">
+  <h3>Messages</h3>
+  <ul id="messageList"></ul>
+</div>
+
+<script>
+  let mediaRecorder, audioChunks = [];
+  let audioContext, analyser, microphone;
+  let recording = false, silenceStart = null;
+  const silenceThreshold = 0.02;
+  const silenceDelay = 1500;
+
+  async function initAudio() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      await audioContext.resume();
+
+      microphone = audioContext.createMediaStreamSource(stream);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      const dataArray = new Uint8Array(analyser.fftSize);
+      microphone.connect(analyser);
+
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const formData = new FormData();
+        formData.append("file", audioBlob, "recording.webm");
+
+        const res = await fetch("/stream", { method: "POST", body: formData });
+        if (res.ok) {
+          const data = await res.json();
+          await renderSingleMessage(data);
+          if (data && data.kind === 'clarification' && data.message) {
+            document.getElementById('clarificationMessage').textContent = data.message;
+            document.getElementById('clarificationBox').style.display = 'block';
+          }
+        } else {
+          console.error("❌ Upload failed");
+        }
+      };
+
+      monitorVolume(dataArray);
+    } catch (err) {
+      console.error("❌ initAudio failed:", err);
+      document.body.innerHTML += `<p style="color:red;">Audio error: </p>`;
+    }
+  }
+
+  function monitorVolume(dataArray) {
+    setInterval(() => {
+      analyser.getByteTimeDomainData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const val = (dataArray[i] - 128) / 128;
+        sum += val * val;
+      }
+      const volume = Math.sqrt(sum / dataArray.length);
+      document.getElementById("volumeFill").style.width = Math.min(volume * 400, 100) + "%";
+
+      if (volume > silenceThreshold && !recording) {
+        audioChunks = [];
+        mediaRecorder.start();
+        recording = true;
+        silenceStart = null;
+      }
+
+      if (recording) {
+        if (volume < silenceThreshold) {
+          if (!silenceStart) {
+            silenceStart = Date.now();
+          } else if (Date.now() - silenceStart > silenceDelay) {
+            mediaRecorder.stop();
+            recording = false;
+            silenceStart = null;
+          }
+        } else {
+          silenceStart = null;
+        }
+      }
+    }, 200);
+  }
+
+  function appendMessage(msg) {
+    if (msg.message) {
+      const li = document.createElement("li");
+      li.textContent = msg.message;
+      document.getElementById("messageList").appendChild(li);
+    }
+    if (msg && msg.kind === 'clarification' && msg.message) {
+      document.getElementById('clarificationMessage').textContent = msg.message;
+      document.getElementById('clarificationBox').style.display = 'block';
+    }
+  }
+
+  async function renderSingleMessage(msg) {
+    if (msg.kind === "batch" && Array.isArray(msg.responses)) {
+      for (const submsg of msg.responses) {
+        await renderSingleMessage(submsg);
+      }
+      return;
+    }
+    if (msg.owl && typeof msg.owl === "string") {
+      document.getElementById("owlDisplay").textContent = msg.owl;
+      if (msg.kind === "success") {
+        document.getElementById('clarificationBox').style.display = 'none';
+        document.getElementById('clarificationMessage').textContent = '';
+      }
+    }
+    appendMessage(msg);
+  }
+
+  async function respondToClarification(answer) {
+    try {
+      const res = await fetch('/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ update: 'clarification', content: { response: answer } })
+      });
+      const data = await res.json();
+      await renderSingleMessage(data);
+    } catch (e) {
+      console.error('❌ Clarification POST failed', e);
+    }
+  }
+
+  document.getElementById("downloadOwlBtn").addEventListener("click", async () => {
+    try {
+      const res = await fetch('/owl');
+      const data = await res.json();
+      const owl = data.owl || '';
+      const blob = new Blob([owl], { type: 'application/rdf+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ontology.owl';
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      a.remove();
+    } catch (e) {
+      console.error('Failed to download OWL', e);
+    }
+  });
+
+  initAudio();
+</script>
+</body>
+</html>

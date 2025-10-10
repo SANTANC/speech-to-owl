@@ -1,0 +1,12 @@
+# Environment and caches
+Project_Files/.env
+__pycache__/
+.pytest_cache/
+.DS_Store
+
+# Runtime artifacts
+uploads/
+Output/
+
+# Test reports
+Project_Files/test-reports/
