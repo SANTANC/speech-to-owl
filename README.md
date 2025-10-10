@@ -1,7 +1,5 @@
 # Speech to OWL Ontology
 
-[![tests](https://github.com/GIO443/speech-to-owl/actions/workflows/tests.yml/badge.svg)](https://github.com/GIO443/speech-to-owl/actions/workflows/tests.yml)
-
 Turn short spoken phrases into a standards-compliant OWL ontology (RDF/XML) you can use anywhere.
 
 This app records audio in the browser, transcribes it, parses the text into structured updates (add class, add relation, delete, rename), and builds an OWL ontology using rdflib. You can view the resulting OWL in the UI and download it as `ontology.owl`.
@@ -95,6 +93,22 @@ The generated OWL is standard RDF/XML and can be used with any compatible tool.
 
 - `ModuleNotFoundError: rdflib`: run `pip install -r requirements.txt`.
 - OpenAI API failures: ensure `.env` exists and contains a valid key.
+
+## Continuous Integration (CI)
+
+This project does not run automated tests in CI by default.
+
+Why:
+- The parsers are designed to use the OpenAI API (LLM-first) for realistic behavior. Running these tests in a headless CI environment would either require exposing secrets (OPENAI_API_KEY) or significantly altering runtime behavior (offline mocks or heavy regex-only fallbacks).
+- To keep the project fully functional and true-to-use locally (with your own OpenAI key), we’ve chosen not to run tests automatically in CI.
+
+How to run tests locally:
+- Install dependencies: `pip install -r requirements.txt`
+- Run the test suite: `make test`
+- Optional JUnit XML: `make test-junit`
+
+Manual CI trigger (optional):
+- The repository includes a manual, no-op workflow under `.github/workflows/tests.yml` (workflow_dispatch). You can trigger it from the Actions tab if you need a placeholder run, but it does not execute tests.
 
 ## License
 
