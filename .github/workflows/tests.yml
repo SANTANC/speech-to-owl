@@ -1,8 +1,0 @@
-name: tests
-on:
-workflow_dispatch: {}
-jobs:
-noop:
-runs-on: ubuntu-latest
-steps:
-  - run: echo "CI tests are disabled intentionally. Triggered manually after cloning. Full functionality requires OpenAI API Key."
